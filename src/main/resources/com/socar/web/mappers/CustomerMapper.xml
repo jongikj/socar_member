@@ -1,0 +1,57 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.socar.web.mappers.CustomerMapper">
+	<select id="count" resultType="com.socar.web.domains.Retval">
+		select count(*) as count from customer
+	</select>
+	<select id="list" resultType="com.socar.web.domains.CustomerDTO"
+	parameterType="com.socar.web.domains.Command">
+	  select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select 
+      c.customer_seq customerSeq,
+      c.category category,
+      c.title title,
+      c.content content,
+      c.answer answer,
+      c.file_name fileName,
+      c.role role,
+      c.reg_date regDate,
+      c.id id
+      from customer c order by customer_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN #{start} and #{end};
+	</select>
+	 <select id="find_count" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Command">
+   		select count(*) as count 
+   		from   customer mc
+   		where ${keyField} like CONCAT('%',#{keyword},'%')
+   		    and    mc.id is not null
+	        and    mc.role = 'CUSTOMER'
+   		
+   </select>
+	<select id="find" resultType="com.socar.web.domains.CustomerDTO" parameterType="com.socar.web.domains.Command">
+      select t2.*
+      from (select @ROWNUM := @ROWNUM + 1 AS seq
+	              ,mc.title
+	              ,mc.content content
+	              ,DATE_FORMAT(mc.reg_date, '%Y-%m-%d') regDate
+	              ,mc.customer_seq  customerSeq
+	              ,mc.id
+	              ,mc.answer
+	       from    customer mc 
+	               ,(SELECT @ROWNUM := 0) R
+	       where   ${keyField} like CONCAT('%',#{keyword},'%')
+	        and    mc.id is not null
+	        and    mc.role = 'CUSTOMER'
+	      ) t2
+      where t2.seq between #{start} and #{end}
+      order by t2.seq asc
+   </select>
+</mapper>

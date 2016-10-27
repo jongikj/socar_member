@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.socar.web.mappers.CouponMapper">
+<select id="count" resultType="com.socar.web.domains.Retval">
+select count(*) as count from coupon_master
+</select>
+<select id="findCount" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Command">
+   select count(*) as count from coupon_master where ${keyField} = #{keyword}
+</select>
+<select id="list" resultType="com.socar.web.domains.CouponDTO" parameterType="com.socar.web.domains.Command">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select
+      cm.coupon_master_seq couponMasterSeq,
+      cm.coupon_name couponName,
+      cm.open_date_start openDateStart,
+      cm.open_date_end openDateEnd,
+      cm.ep_date epDate,
+      cm.option_header optionHeader,
+      cm.option_detail optionDetail,
+      cm.img_name imgName,
+      cm.dc_option dcOption,
+      cm.dc dc,
+      cm.coupon_count couponCount 
+      from Coupon_master cm order by coupon_master_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN ${start} and ${end};
+</select>
+<select id="find" parameterType="com.socar.web.domains.Command" resultType="com.socar.web.domains.CouponDTO">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select
+      cm.coupon_master_seq couponMasterSeq,
+      cm.coupon_name couponName,
+      cm.open_date_start openDateStart,
+      cm.open_date_end openDateEnd,
+      cm.ep_date epDate,
+      cm.option_header optionHeader,
+      cm.option_detail optionDetail,
+      cm.img_name imgName,
+      cm.dc_option dcOption,
+      cm.dc dc,
+      cm.coupon_count couponCount 
+      from Coupon_master cm where ${keyField} = #{keyword} order by coupon_master_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN #{start} and #{end};
+</select>
+</mapper>

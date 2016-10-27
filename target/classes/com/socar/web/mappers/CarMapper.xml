@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.socar.web.mappers.CarMapper">
+<select id="list" resultType="com.socar.web.domains.CarDTO" parameterType="com.socar.web.domains.Command">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select 
+      c.car_seq carSeq,
+      c.rent_amt rentAmt,
+      c.drive_amt driveAmt,
+      c.car_num carNum,
+      c.car_type carType,
+      c.oil_type oilType,
+      c.car_option carOption,
+      c.socar_zone socarZone,
+      c.car_img carImg
+      from Car c order by car_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN ${start} and ${end};
+   </select>
+   <select id="count" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Retval">
+   	select count(*) as count from Car
+   </select>
+   <select id="findCount" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Command">
+   	   	  select count(*) as count from Car where ${keyField} like CONCAT('%',#{keyword},'%')
+   </select>
+	<select id="find" resultType="com.socar.web.domains.CarDTO" parameterType="com.socar.web.domains.Command">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select
+      c.car_seq carSeq,
+      c.rent_amt rentAmt,
+      c.drive_amt driveAmt,
+      c.car_num carNum,
+      c.car_type carType,
+      c.oil_type oilType,
+      c.car_option carOption,
+      c.socar_zone socarZone,
+      c.car_img carImg
+      from Car c where ${keyField} like CONCAT('%',#{keyword},'%') order by car_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN #{start} and #{end};
+   </select>
+</mapper>

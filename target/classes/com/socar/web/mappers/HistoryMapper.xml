@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.socar.web.mappers.HistoryMapper">
+   <select id="count" resultType="com.socar.web.domains.Retval">
+      select count(*) as count from rent
+   </select>
+   <select id="findCount" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Command">
+   	  select count(*) as count from rent where ${keyField} = #{keyword}
+   </select>
+   <select id="list" resultType="com.socar.web.domains.HistoryDTO" parameterType="com.socar.web.domains.Command">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select 
+      r.rent_seq rentSeq,
+      r.start_date startDate,
+      r.end_date endDate,
+      r.milege milege,
+      r.car_seq carSeq,
+      r.coupon_member_seq couponMemberSeq
+      from rent r order by rent_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN ${start} and ${end};
+   </select>  
+   <select id="find" resultType="com.socar.web.domains.HistoryDTO" parameterType="com.socar.web.domains.Command">
+     select *
+      from(
+      select @NO := @NO + 1 as ROWNUM, A.*
+      from
+      (
+      select
+      r.rent_seq rentSeq,
+      r.start_date startDate,
+      r.end_date endDate,
+      r.milege milege,
+      r.car_seq carSeq,
+      r.coupon_member_seq couponMemberSeq 
+      from rent r where ${keyField} = #{keyword} order by rent_seq desc
+      )A,
+      (select @NO := 0)B
+      )C
+      where C.ROWNUM BETWEEN #{start} and #{end};
+   </select>
+</mapper>

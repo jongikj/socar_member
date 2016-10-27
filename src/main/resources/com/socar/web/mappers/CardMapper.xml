@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.socar.web.mappers.CardMapper">
+<select id="list" resultType="com.socar.web.domains.CardDTO" parameterType="com.socar.web.domains.Command">
+		select 
+		card_num cardNum,
+		card_pw cardPw,
+		card_month cardMonth,
+		card_year cardYear,
+		business_num businessNum,
+		id id
+		from card
+   </select>
+   <select id="count" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Retval">
+   	select count(*) as count from Card
+   </select>
+   <select id="findCount" resultType="com.socar.web.domains.Retval" parameterType="com.socar.web.domains.Command">
+   	   	  select count(*) as count from Card where ${keyField} = #{keyword}
+   </select>
+	<select id="find" resultType="com.socar.web.domains.CardDTO" parameterType="com.socar.web.domains.Command">
+		select 
+		card_num cardNum,
+		card_pw cardPw,
+		card_month cardMonth,
+		card_year cardYear,
+		business_num businessNum,
+		id id
+		from card where ${keyField} = #{keyword}
+   </select>
+</mapper>
